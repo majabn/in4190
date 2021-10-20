@@ -1,0 +1,138 @@
+function obligin3190()
+    %oppgave_1()
+    oppgave_2()
+end
+
+function oppgave_1()
+    fs = 100;
+    N = fs * 5;
+    t = linspace(0, 5, N);
+    f1 = 10;
+    f2 = 20;
+    
+    x = sin(2*pi*f1*t) + sin(2*pi*f2*t);
+%     k = 0:4;
+%     h = zeros(1,N);
+%     for n = 1:N
+% %         h(n) = 1/5 * sum(dirac(n-k));
+%     end
+%     
+    %Definerer h[n] alternativt pga math toolbox ikke på min matlab for
+    %øyeblikket.
+    kmax = 4;
+    n = -1:100;
+    h = 0;
+
+    for k = 0:kmax
+        h = h + (1/5) * (n == k);
+    end
+    length(h)
+    
+    
+    y = konvin3190(h, x, 1);
+    [X, f] = frekspekin3190(x, N, fs);
+    [H, fh] = frekspekin3190(h, length(h), fs);
+    [Y, fy] = frekspekin3190(y, length(y), fs);
+    
+    omega = linspace(-pi, pi, N);
+    %X = [X X(1)];
+    figure;
+    sgtitle("Frequency response: H");
+    subplot(2,1,1);
+    plot(fh, (abs(H)));
+    xlabel("Frequency (Hz)");
+    ylabel("Magnitude");
+    
+    figure;
+    hold on;
+    plot(f, (abs(X)));
+    plot(fy, (abs(Y)));
+    hold off;
+    title("Frequency response");
+    xlabel("Frequency (Hz)");
+    ylabel("Magnitude");
+    legend("X", "Y", 'Location', 'southwest') ;
+end
+
+function oppgave_2()
+    h1 = [0.0002, 0.0001, -0.0001, -0.0005, -0.0011, -0.0017, -0.0019, ...
+        -0.0016, -0.0005, 0.0015, 0.0040, 0.0064, 0.0079, 0.0075, 0.0046, ...
+        -0.0009, -0.0084, -0.0164, -0.0227, -0.0248, -0.0203, -0.0079, ...
+        0.0127, 0.0400, 0.0712, 0.1021, 0.1284, 0.1461, 0.1523, 0.1461, ...
+        0.1284, 0.1021, 0.0712, 0.0400, 0.0127, -0.0079, -0.0203, -0.0248, ...
+        -0.0227, -0.0164, -0.0084, -0.0009, 0.0046, 0.0075, 0.0079, 0.0064, ...
+        0.0040, 0.0015, -0.0005, -0.0016, -0.0019, -0.0017, -0.0011, ...
+        -0.0005, -0.0001, 0.0001, 0.0002];
+
+    h2 = [-0.0002, -0.0001, 0.0003, 0.0005, -0.0001, -0.0009, -0.0007, ...
+        0.0007, 0.0018, 0.0005, -0.0021, -0.0027, 0.0004, 0.0042, 0.0031, ...
+        -0.0028, -0.0067, -0.0023, 0.0069, 0.0091, -0.0010, -0.0127, ...
+        -0.0100, 0.0077, 0.0198, 0.0075, -0.0193, -0.0272, 0.0014, 0.0386, ...
+        0.0338, -0.0246, -0.0771, -0.0384, 0.1128, 0.2929, 0.3734, 0.2929, ...
+        0.1128, -0.0384, -0.0771, -0.0246, 0.0338, 0.0386, 0.0014, -0.0272, ...
+        -0.0193, 0.0075, 0.0198, 0.0077, -0.0100, -0.0127, -0.0010, 0.0091, ...
+        0.0069, -0.0023, -0.0067, -0.0028, 0.0031, 0.0042, 0.0004, -0.0027, ...
+        -0.0021, 0.0005, 0.0018, 0.0007, -0.0007, -0.0009, -0.0001, 0.0005, ...
+        0.0003, -0.0001, -0.0002];
+    figure;
+    hold on;
+    stem(1:length(h1), h1);
+    stem(1:length(h2), h2);
+    hold off;
+    title("Filters h1 and h2");
+    xlabel("Normalized time (samples)");
+    ylabel("Amplitude");
+    legend("h1", "h2", 'Location', 'southwest') ;
+    
+    fs = 100;
+    [H1, f1] = frekspekin3190(h1, length(h1), fs);
+    [H2, f2] = frekspekin3190(h2, length(h2), fs);
+    
+    omega = linspace(-pi, pi, length(h1));
+    %X = [X X(1)];
+    figure;
+    hold on;
+    plot(f1, db(abs(H1)));
+    plot(f2, db(abs(H2)));
+    hold off;
+    title("Frequency response");
+    xlabel("Normalized frequency (rad/sample)");
+    ylabel("Magnitude (dB)");
+    legend("X", "Y", 'Location', 'southwest') ;
+end
+
+function y = konvin3190(h, x, ylen)
+    outlen = 0;
+    if ylen == 0
+        outlen = length(x);
+    elseif ylen == 1
+        outlen = length(x) + length(h) - 1;
+    else
+        print("Feil input (ylen=0|1)");
+    end
+    h = h(:);
+    x = x(:);
+    y = zeros(outlen,1);
+
+    for i = 1:outlen
+        for j = max(1, i - length(x) + 1):min(length(h), i)
+            y(i) = y(i) + h(j) * x(i + 1 - j);
+        end
+    end
+end
+
+function [X, f] = frekspekin3190(x, N, fs)
+    X = zeros(N,1);
+    omega = linspace(-pi, pi, N);
+    length(x)
+    
+    % Endringen jeg gjorde som ga forskjell kom her
+    % Indeksering k fra 1 til N, endret omega(l) til omega(k) * l
+    for k = 1:N
+        total = 0;
+        for l = 1:N
+            X(k) = X(k) + x(l) * exp(-1j*omega(k) * l);
+        end
+    end
+    f = omega / (2*pi) * fs;
+end
