@@ -1,0 +1,46 @@
+function oblig1()
+    fs = 100;
+    N = fs * 5;
+    t = linspace(0, 5, N);
+    n = 1:N;
+    f1 = 10;
+    f2 = 20;
+    
+    x = sin(2*pi*f1*t) + sin(2*pi*f2*t);
+    k = 0:4;
+    h = 1/5 * sum(dirac(n-k));
+    
+    y = konvin3190(h, x, 1);
+    [X, f] = frekspekin3190(x, N, fs);
+end
+
+function y = konvin3190(h, x, ylen)
+    outlen = 0;
+    if ylen == 0
+        outlen = length(x);
+    elseif ylen == 1
+        outlen = length(x) + length(h) - 1;
+    else
+        print("Feil input (ylen=0|1)");
+    end
+    y = zeros(1,outlen);
+    for i = 1:outlen
+        for j = max(1, i - length(x) + 1):min(length(h), i)
+            y(i) = y(i) + h(j) * x(i + 1 - j);
+        end
+    end
+end
+
+function [X, f] = frekspekin3190(x, N, fs)
+    X = zeros([1, N]);
+    omega = linspace(-pi, pi, N);
+    
+    for k = 0:N-1
+        total = 0;
+        for l = 1:N
+            total = total + x(l) * exp(-j*omega(l));
+        end
+        X(k+1) = total;
+    end
+    f = omega / (2*pi) * fs;
+end
