@@ -101,15 +101,15 @@ function oppgave_2(h1, h2)
     
    
     %% Oppgave 2b
-    x = seismogram1(:,1);
+    x = seismogram1(200:300,1);
     W = tukeywin(length(x), 0.8);
     figure;
     hold on;
-    plot(1:length(x), x);
-    plot(1:length(x), W .* x);
+    plot(t(200:300), x);
+    plot(t(200:300), W .* x);
     hold off;
     title("Seismogram1 nærtrase");
-    xlabel("Normalized time (samples)");
+    xlabel("Time (ms)");
     ylabel("Amplitude");
     legend("x", "x_{window}", 'Location', 'southwest') ;
     
@@ -189,6 +189,7 @@ function oppgave_3(h1, h2)
     ylabel("Amplitude");
     fs = 1/(t(2)-t(1));
     
+    x = filtered_seismogram1(30:100,1);
     [X, f] = frekspekin3190(x, length(x), fs);
     figure;
     plot(f, db(abs(X)));
@@ -328,8 +329,8 @@ function oppgave_6(h1, h2)
     
     %% Oppgave 6a
     v_1 = 1500;
-    v_2 = 1400;
-    v_3 = 1600;
+    v_2 = 1475;
+    v_3 = 1525;
     vnmo1 = v_1 * ones(size(t));
     vnmo2 = v_2 * ones(size(t));
     vnmo3 = v_3 * ones(size(t));
@@ -349,20 +350,20 @@ function oppgave_6(h1, h2)
     subplot(1,3,2);
     imagesc(offset1, t*1000,seisnmo2);
     colormap(gray);
-    title("vnmo=1400");
+    title("vnmo=1475");
     xlabel("Offset (m)");
     ylabel("Tid (ms)");
     
     subplot(1,3,3);
     imagesc(offset1, t*1000,seisnmo3);
     colormap(gray);
-    title("vnmo=1600");
+    title("vnmo=1525");
     xlabel("Offset (m)");
     ylabel("Tid (ms)");
     
     %% Oppgave 6b
-    v_1 = 1500;
-    v_2 = 1800;
+    v_1 = 1475;
+    v_2 = 2800;
     I = round(length(t)/2)-200;
     vnmo = v_1 * ones(size(t));
     vnmo(I+1:end) = v_2;
@@ -418,22 +419,22 @@ function oppgave_7(h1, h2)
     figure;
     sgtitle("Seismogram1 direkte ankomst");
     subplot(1,2,1);
-    x = filtered_seismogram1(:,1);
+    x = filtered_seismogram1(:,500);
     plot(1:length(x), abs(x));
-    xlim([610,650]);
-    title("Chosen trase 1");
+    xlim([750,850]);
+    title("Chosen trase 500");
     xlabel("Normalized time (samples)");
     ylabel("Amplitude");
     
     subplot(1,2,2);
-    x = filtered_seismogram1(:,200);
+    x = filtered_seismogram1(:,550);
     plot(1:length(x), abs(x));
-    xlim([640,700]);
-    title("Chosen trase 200");
+    xlim([800,900]);
+    title("Chosen trase 550");
     xlabel("Normalized time (samples)");
     ylabel("Amplitude");
-    s = offset1(200) - offset1(1);
-    t_ = t(666) - t(628);
+    s = offset1(550) - offset1(500);
+    t_ = t(857) - t(823);
     v=s/t_
     
     %% Oppgave 7c
@@ -463,22 +464,22 @@ function oppgave_7(h1, h2)
     figure;
     sgtitle("Seismogram2 direkte ankomst");
     subplot(1,2,1);
-    x = filtered_seismogram2(:,1);
+    x = filtered_seismogram2(:,500);
     plot(1:length(x), abs(x));
-    xlim([610,650]);
-    title("Chosen trase 1");
+    xlim([750,850]);
+    title("Chosen trase 500");
     xlabel("Normalized time (samples)");
     ylabel("Amplitude");
     
     subplot(1,2,2);
-    x = filtered_seismogram2(:,200);
+    x = filtered_seismogram2(:,550);
     plot(1:length(x), abs(x));
-    xlim([640,700]);
-    title("Chosen trase 200");
+    xlim([800,900]);
+    title("Chosen trase 550");
     xlabel("Normalized time (samples)");
     ylabel("Amplitude");
-    s = offset2(200) - offset2(1);
-    t_ = t(666) - t(628);
+    s = offset2(550) - offset2(500);
+    t_ = t(857) - t(823);
     v=s/t_
     
 end
